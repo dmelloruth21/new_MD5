@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MD5 Hash Algorithm Virtual Laboratory Experiment - Department of Computer Engineering, Fr. Conceicao Rodrigues College of Engineering">
+    <title>MD5 Hash Algorithm | Virtual Cryptography Laboratory</title>
+    <!-- Common theme and experiment styles -->
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/experiment.css">
+    <style>
+      /* =========================================================
+         MD5 EXPERIMENT SPECIFIC STYLES (Aligned with Portal Theme)
+         ========================================================= */
+
+      /* Tab Buttons Enhancement */
+      .tab-btn { color: #d0c1b8; font-weight: 600; transition: all 180ms ease; }
+      .tab-btn:hover, .tab-btn:focus-visible { background: rgba(76, 140, 232, 0.15); border-color: rgba(76, 140, 232, 0.5); color: #ffffff; outline: none; }
+      .tab-btn.active { background: var(--color-secondary); color: #ffffff; font-weight: 700; border-color: var(--color-secondary); }
+
+      /* Aim & Objectives Styling */
+      .aim-container { display: flex; flex-direction: column; gap: 20px; }
+      .aim-card-hero { background: var(--color-surface); border: 1px solid var(--color-border); border-left: 5px solid var(--color-secondary); border-radius: var(--radius-md); padding: 20px 24px; }
+      .aim-card-hero h3 { margin: 0 0 10px; color: #ffda8b; font-size: var(--font-size-xl); }
+      .aim-card-hero p { margin: 0; color: var(--color-text); line-height: 1.6; }
+      .aim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+      .aim-item-box { background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease; }
+      .aim-item-box:hover { transform: translateY(-2px); border-color: var(--color-secondary); background: rgba(76, 140, 232, 0.08); }
+      .aim-item-header { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #f6f0ec; font-size: var(--font-size-md); }
+      .aim-item-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-secondary); color: #ffffff; font-size: 13px; font-weight: bold; }
+      .aim-item-box p { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-muted); line-height: 1.5; }
+
+      /* Theory Cards & Typography */
+      .theory-section-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px; }
+      .theory-section-card h3 { margin: 0 0 14px; color: #ffda8b; font-size: var(--font-size-xl); border-bottom: 1px solid var(--color-border); padding-bottom: 8px; }
+      .theory-section-card h4 { margin: 20px 0 8px; color: #f6f0ec; font-size: var(--font-size-lg); }
+      .theory-section-card p, .theory-section-card li { color: var(--color-text); line-height: 1.65; font-size: var(--font-size-md); }
+      .formula-block { background: #181311; color: #ffda8b; border: 1px solid #4a3a30; border-left: 4px solid var(--color-secondary); border-radius: var(--radius-sm); padding: 14px 18px; font-family: "JetBrains Mono", monospace; font-size: 0.92rem; line-height: 1.6; margin: 14px 0; overflow-x: auto; }
+      .rounds-table-wrapper { overflow-x: auto; margin: 16px 0; border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
+      .styled-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); font-family: Arial, sans-serif; background: var(--color-surface); }
+      .styled-table th, .styled-table td { padding: 11px 15px; border: 1px solid var(--color-border); text-align: left; }
+      .styled-table th { background: #1c1613; color: #ffda8b; font-weight: 700; }
+      .styled-table tr:nth-child(even) { background: rgba(0, 0, 0, 0.2); }
+      .styled-table tr:hover { background: rgba(76, 140, 232, 0.08); }
+      .code-badge { background: rgba(0, 0, 0, 0.35); padding: 2px 6px; border: 1px solid #5a463b; border-radius: 4px; font-family: "JetBrains Mono", monospace; font-size: 0.9em; color: #ffda8b; }
+      .theory-callout { background: var(--color-surface-muted); border-left: 4px solid var(--color-secondary); border-radius: var(--radius-sm); padding: 12px 16px; margin: 14px 0; }
+      .theory-callout.danger { border-left-color: #e74c3c; background: rgba(231, 76, 60, 0.1); }
+
+      /* Procedure Flowchart & Steps */
+      .flowchart-container { background: #1c1613; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 24px; margin: 20px 0; }
+      .flowchart-title { text-align: center; font-weight: 700; font-size: var(--font-size-lg); color: #ffda8b; margin-bottom: 20px; }
+      .flow-steps-grid { display: flex; flex-direction: column; gap: 12px; max-width: 760px; margin: 0 auto; }
+      .flow-step-node { display: flex; align-items: center; gap: 16px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px 18px; position: relative; transition: all 180ms ease; }
+      .flow-step-node:hover { border-color: var(--color-secondary); background: rgba(76, 140, 232, 0.1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); transform: translateX(4px); }
+      .flow-step-badge { width: 36px; height: 36px; border-radius: 50%; background: var(--color-secondary); color: #ffffff; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
+      .flow-step-content { flex: 1; }
+      .flow-step-name { font-weight: 700; font-size: var(--font-size-md); color: #ffffff; margin-bottom: 2px; }
+      .flow-step-desc { font-size: var(--font-size-sm); color: var(--color-text-muted); line-height: 1.4; }
+      .flow-arrow-down { display: flex; justify-content: center; align-items: center; color: var(--color-secondary); font-size: 20px; font-weight: bold; margin: -4px 0; }
+      .procedure-steps-list { padding-left: 20px; line-height: 1.7; }
+      .procedure-steps-list li { margin-bottom: 12px; }
+
+      /* Simulation Controls */
+      .sim-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px; }
+      .sim-box h3 { margin: 0 0 14px; color: #ffda8b; font-size: var(--font-size-xl); }
+      .md5-large-textarea { width: 100%; min-height: 110px; padding: 14px 16px; background: #181311; color: #ffffff; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); font-family: "JetBrains Mono", monospace; font-size: 15px; line-height: 1.55; resize: vertical; transition: border-color 150ms ease, box-shadow 150ms ease; box-sizing: border-box; }
+      .md5-large-textarea:focus { outline: none; border-color: var(--color-secondary); box-shadow: 0 0 0 3px rgba(76, 140, 232, 0.28); }
+      .md5-large-textarea::placeholder { color: #8c786d; font-style: italic; }
+      .salt-toggle-card { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #1f1815; border: 1px solid #4a3a30; border-radius: var(--radius-sm); padding: 10px 16px; margin: 12px 0 14px; }
+      .salt-toggle-label { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: var(--font-size-sm); color: #f6f0ec; font-weight: 500; }
+      .salt-toggle-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--color-secondary); cursor: pointer; }
+      .salt-badge-token { background: rgba(76, 140, 232, 0.15); border: 1px solid var(--color-secondary); color: #79aeff; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-family: "JetBrains Mono", monospace; font-weight: 600; }
+      .preset-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 16px; }
+      .preset-btn { background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: Arial, sans-serif; color: var(--color-text); cursor: pointer; transition: all 150ms ease; }
+      .preset-btn:hover { background: rgba(76, 140, 232, 0.25); color: #ffffff; border-color: var(--color-secondary); }
+      .button-row { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+      .btn-primary { background: var(--color-secondary); color: #ffffff; border: none; border-radius: var(--radius-sm); padding: 10px 22px; font-weight: 700; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; }
+      .btn-primary:hover { background: var(--color-secondary-dark); transform: translateY(-1px); }
+      .btn-secondary { background: var(--color-surface-muted); color: var(--color-text); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 10px 18px; font-weight: 600; cursor: pointer; transition: all 150ms ease; }
+      .btn-secondary:hover { background: #43352e; border-color: var(--color-border-strong); color: #ffffff; }
+
+      /* Hash Output & Diagnostics */
+      .hash-display-card { background: #14100e; border: 1px solid #3d3029; border-radius: var(--radius-sm); padding: 18px; margin: 16px 0; color: #f6f0ec; }
+      .hash-output-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .hash-hex-value { font-family: "JetBrains Mono", monospace; font-size: 1.25rem; font-weight: 700; color: #4cd964; letter-spacing: 0.05em; word-break: break-all; }
+      .btn-copy { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff; padding: 6px 14px; border-radius: 4px; font-size: 13px; cursor: pointer; transition: background 150ms ease; }
+      .btn-copy:hover { background: rgba(76, 140, 232, 0.3); border-color: var(--color-secondary); }
+      .analysis-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+      .metric-card { background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+      .metric-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.05em; }
+      .metric-value { font-size: 1.15rem; font-weight: 700; color: #ffda8b; font-family: "JetBrains Mono", monospace; }
+      .registers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; }
+      .register-card { background: #181311; border: 1px solid #3a302a; border-radius: 6px; padding: 10px 14px; color: #f1ede8; }
+      .register-name { font-size: 12px; color: #e59344; font-weight: bold; }
+      .register-hex { font-family: "JetBrains Mono", monospace; font-size: 0.95rem; color: #ffda8b; font-weight: 600; word-break: break-all; }
+
+      /* Avalanche Section & 128-Bit Heatmap Matrix */
+      .avalanche-section { background: var(--color-surface); border: 2px solid var(--color-secondary); border-radius: var(--radius-md); padding: 24px; margin-top: 24px; }
+      .avalanche-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+      .avalanche-header h3 { margin: 0; color: #ffda8b; font-size: var(--font-size-xl); }
+      .badge-avalanche { background: rgba(76, 140, 232, 0.15); color: #79aeff; border: 1px solid var(--color-secondary); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 700; }
+      .avalanche-history-banner { background: #181311; border: 1px solid #4a3a30; border-left: 4px solid var(--color-secondary); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; font-size: var(--font-size-sm); color: #f6f0ec; line-height: 1.5; }
+      .avalanche-inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+      @media (max-width: 720px) { .avalanche-inputs-grid { grid-template-columns: 1fr; } }
+      .avalanche-col { display: flex; flex-direction: column; gap: 8px; }
+      .avalanche-col label { font-size: var(--font-size-sm); font-weight: 700; color: #ffda8b; }
+      .avalanche-col input { width: 100%; padding: 10px 14px; background: #181311; color: #ffffff; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: "JetBrains Mono", monospace; font-size: 14px; box-sizing: border-box; }
+      .av-hash-preview { font-family: "JetBrains Mono", monospace; font-size: 13px; color: #79aeff; background: #14100e; border: 1px solid #3d3029; padding: 8px 12px; border-radius: 4px; word-break: break-all; }
+      .avalanche-stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0; }
+      .avalanche-stat-box { background: #181311; border: 1px solid #3a302a; border-radius: var(--radius-sm); padding: 12px 16px; text-align: center; }
+      .avalanche-stat-val { font-size: 1.4rem; font-weight: 700; font-family: "JetBrains Mono", monospace; }
+      .stat-flipped { color: #ff6b6b; }
+      .stat-percent { color: #f5a623; }
+      .stat-status { color: #2ed573; }
+      .avalanche-stat-label { font-size: 12px; color: #b0a59f; text-transform: uppercase; letter-spacing: 0.04em; }
+      .avalanche-grid-container { margin: 20px 0; background: #120e0c; border: 1px solid #2d241f; border-radius: var(--radius-sm); padding: 16px; }
+      .avalanche-grid-title { color: #ffda8b; font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+      .bit-matrix-128 { display: grid; grid-template-columns: repeat(32, 1fr); gap: 3px; padding: 8px 0; }
+      @media (max-width: 768px) { .bit-matrix-128 { grid-template-columns: repeat(16, 1fr); } }
+      .bit-cell { aspect-ratio: 1; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; font-family: "JetBrains Mono", monospace; cursor: pointer; transition: transform 120ms ease; }
+      .bit-cell:hover { transform: scale(1.4); z-index: 10; }
+      .bit-same { background: #1c271e; color: #6edb8c; border: 1px solid #2c4230; }
+      .bit-flipped { background: #4a1818; color: #ff8585; border: 1px solid #7c2626; box-shadow: 0 0 4px rgba(255, 90, 90, 0.4); }
+      .legend-bar { display: flex; gap: 16px; font-size: 12px; color: #ccc; margin-top: 10px; align-items: center; }
+      .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+      .legend-chip { width: 14px; height: 14px; border-radius: 2px; }
+
+      /* MD5 6-Stage Processing Visualizer */
+      .visualizer-wrapper { margin-top: 24px; }
+      .stage-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-bottom: 12px; overflow: hidden; }
+      .stage-toggle-btn { width: 100%; padding: 12px 16px; background: var(--color-surface-muted); border: 0; color: var(--color-text); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: var(--font-size-md); font-weight: 700; text-align: left; transition: background 150ms ease; }
+      .stage-toggle-btn:hover { background: rgba(76, 140, 232, 0.12); }
+      .stage-num-badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--color-secondary); color: #ffffff; font-size: 13px; flex-shrink: 0; }
+      .stage-toggle-arrow { margin-left: auto; font-size: 12px; color: var(--color-text-muted); transition: transform 150ms ease; }
+      .stage-toggle-btn.open .stage-toggle-arrow { transform: rotate(180deg); }
+      .stage-body { display: none; padding: 16px; border-top: 1px solid var(--color-border); }
+      .stage-body.open { display: block; }
+      .stage-body p { margin: 0 0 10px; color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.5; }
+      .code-display-box { background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 12px 14px; font-family: "JetBrains Mono", monospace; font-size: 13px; line-height: 1.7; color: var(--color-text); overflow-x: auto; word-break: break-all; margin: 8px 0; }
+      .padding-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; margin: 8px 0; }
+      .pad-original { color: #70b8ff; }
+      .pad-start { color: #f5a623; font-weight: 700; }
+      .pad-zeros { color: #88786f; }
+      .pad-len { color: #2ed573; font-weight: 700; }
+      .word-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+      @media (max-width: 640px) { .word-grid { grid-template-columns: repeat(2, 1fr); } }
+      .word-box { background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 8px 10px; font-family: "JetBrains Mono", monospace; font-size: 12px; }
+      .word-box .word-idx { color: var(--color-primary); font-weight: 700; font-size: 11px; display: block; margin-bottom: 2px; }
+      .word-box .word-hex { color: var(--color-text); }
+      .rounds-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 12px 0; }
+      .round-card { background: var(--color-surface-muted); border: 1px solid var(--color-border); border-left: 3px solid var(--color-secondary); border-radius: var(--radius-sm); padding: 12px; }
+      .round-card h4 { margin: 0 0 6px; color: var(--color-primary); font-size: 14px; }
+      .round-card ul { margin: 0; padding-left: 18px; font-size: 12px; color: var(--color-text-muted); line-height: 1.5; }
+
+      /* Quiz Styling (10 Questions) */
+      .quiz-wrapper { display: flex; flex-direction: column; gap: 20px; }
+      .quiz-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 18px 22px; transition: border-color 150ms ease; }
+      .quiz-card.correct-card { border-color: #2ed573; background: rgba(46, 213, 115, 0.08); }
+      .quiz-card.wrong-card { border-color: #ff4757; background: rgba(255, 71, 87, 0.08); }
+      .quiz-question-title { font-weight: 700; font-size: var(--font-size-md); color: #ffda8b; margin-bottom: 12px; }
+      .quiz-options-group { display: flex; flex-direction: column; gap: 8px; }
+      .quiz-option-label { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-sm); color: #f6f0ec; transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease; }
+      .quiz-option-label:hover { background: rgba(76, 140, 232, 0.18); border-color: var(--color-secondary); color: #ffffff; }
+      .quiz-option-label input[type="radio"] { width: auto; margin: 0; accent-color: var(--color-secondary); cursor: pointer; }
+      .quiz-explanation { margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: var(--font-size-sm); line-height: 1.45; display: none; }
+      .quiz-explanation.show { display: block; }
+      .quiz-explanation.exp-correct { background: rgba(46, 213, 115, 0.12); color: #7bed9f; border-left: 3px solid #2ed573; }
+      .quiz-explanation.exp-wrong { background: rgba(255, 71, 87, 0.12); color: #ff7675; border-left: 3px solid #ff4757; }
+      .quiz-score-banner { background: #181311; border: 2px solid var(--color-secondary); color: #ffffff; border-radius: var(--radius-md); padding: 16px 20px; text-align: center; font-size: var(--font-size-lg); font-weight: 700; display: none; margin-top: 16px; }
+      .quiz-score-banner.show { display: block; animation: content-reveal 200ms ease; }
+    </style>
+  </head>
+  <body>
+    <!-- Fr. CRCE Official College Header Banner -->
+    <div class="college-banner-strip">
+      <a href="../../index.html" aria-label="Fr. Conceicao Rodrigues College of Engineering">
+        <img src="../../assets/logos/crce-header-banner.png" alt="Fr. Conceicao Rodrigues College of Engineering - Virtual Cryptography Laboratory" class="college-banner-img">
+      </a>
+    </div>
+
+    <div class="experiment-container">
+      <header class="exp-header">
+        <a class="back-link" href="../../index.html#experiments">&larr; Back to experiment browser</a>
+        <p class="exp-kicker">CSS TH ISE &middot; Cryptographic Security Systems</p>
+        <h1 id="exp-title">MD5 Hash Algorithm</h1>
+        <p id="exp-description">Generate, visualize, and analyze 128-bit MD5 message digests, 4-round 512-bit block compression, dynamic salt nonces, and the strict avalanche effect.</p>
+      </header>
+
+      <!-- Experiment Tab Navigation (Aligned with TEMPLATE.html) -->
+      <nav class="tab-navigation" aria-label="Experiment sections">
+        <button class="tab-btn active" type="button" data-tab="aim" aria-selected="true">Aim &amp; Objectives</button>
+        <button class="tab-btn" type="button" data-tab="theory" aria-selected="false">Theory</button>
+        <button class="tab-btn" type="button" data-tab="procedure" aria-selected="false">Procedure</button>
+        <button class="tab-btn" type="button" data-tab="simulation" aria-selected="false">Simulation</button>
+        <button class="tab-btn" type="button" data-tab="quiz" aria-selected="false">Assessment / Quiz</button>
+        <button class="tab-btn" type="button" role="tab" data-tab="references" aria-selected="false">References</button>
+        <button class="tab-btn" type="button" role="tab" data-tab="feedback" aria-selected="false">Feedback</button>
+      </nav>
+
+      <main class="content-area">
+        <!-- =========================================================
+             SECTION 1: AIM & OBJECTIVES
+             ========================================================= -->
+        <section id="aim" class="tab-content active" data-tab-panel="aim">
+          <div class="aim-container">
+            <div class="aim-card-hero">
+              <h3>Experiment Aim</h3>
+              <p>
+                To implement, trace, and evaluate the <strong>MD5 (Message-Digest Algorithm 5)</strong> cryptographic hashing algorithm; to examine its message preprocessing, 512-bit block parsing, and 64-step non-linear compression rounds; and to quantitatively demonstrate the <strong>Avalanche Effect</strong> and security boundaries through interactive simulation.
+              </p>
+            </div>
+
+            <div class="aim-grid">
+              <div class="aim-item-box">
+                <div class="aim-item-header">
+                  <span class="aim-item-icon">1</span>
+                  <span>Message Preprocessing</span>
+                </div>
+                <p>Understand UTF-8 byte conversion, single-bit <code class="code-badge">0x80</code> padding, zero-padding to 448 mod 512, and 64-bit little-endian length appending.</p>
+              </div>
+
+              <div class="aim-item-box">
+                <div class="aim-item-header">
+                  <span class="aim-item-icon">2</span>
+                  <span>64-Round Compression</span>
+                </div>
+                <p>Trace 4 distinct non-linear rounds utilizing auxiliary Boolean functions (<code class="code-badge">F, G, H, I</code>), per-step trigonometric constants (<code class="code-badge">K[i]</code>), and left circular shifts (<code class="code-badge">S[i]</code>).</p>
+              </div>
+
+              <div class="aim-item-box">
+                <div class="aim-item-header">
+                  <span class="aim-item-icon">3</span>
+                  <span>Register State Transitions</span>
+                </div>
+                <p>Observe the evolution of four 32-bit chaining variables (<code class="code-badge">A, B, C, D</code>) and the Merkle&ndash;Damg&aring;rd feed-forward accumulation.</p>
+              </div>
+
+              <div class="aim-item-box">
+                <div class="aim-item-header">
+                  <span class="aim-item-icon">4</span>
+                  <span>Avalanche Effect Analysis</span>
+                </div>
+                <p>Quantify bitwise Hamming distances and verify the Strict Avalanche Criterion (SAC) showing approximately 50% output bit flips between consecutive inputs.</p>
+              </div>
+
+              <div class="aim-item-box">
+                <div class="aim-item-header">
+                  <span class="aim-item-icon">5</span>
+                  <span>Security &amp; Cryptanalysis</span>
+                </div>
+                <p>Evaluate cryptographic weaknesses, including collision vulnerabilities discovered by Wang et al. and length extension risks, understanding why MD5 is deprecated for modern security.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 2: THEORY
+             ========================================================= -->
+        <section id="theory" class="tab-content" data-tab-panel="theory" hidden>
+          <div class="theory-section-card">
+            <h3>1. Introduction to the MD5 Algorithm</h3>
+            <p>
+              The <strong>MD5 Message-Digest Algorithm</strong> is an iterated cryptographic hash function designed by Professor <strong>Ronald Rivest</strong> of MIT in 1991 to succeed MD4 (specified in <strong>RFC 1321</strong>). MD5 processes an arbitrary-length message and produces a fixed-size <strong>128-bit (16-byte)</strong> message digest, conventionally represented as a 32-character hexadecimal string.
+            </p>
+            <div class="theory-callout">
+              <strong>Core Characteristic:</strong> A cryptographic hash function is a deterministic one-way mapping: <code>H: {0, 1}* &rarr; {0, 1}^128</code>. For any message <em>M</em>, computing <code>MD5(M)</code> is computationally simple, but determining <em>M</em> given only <code>MD5(M)</code> (preimage resistance) is intended to be computationally intractable.
+            </div>
+
+            <h4>2. Preprocessing &amp; Padding</h4>
+            <p>
+              MD5 processes data in successive blocks of <strong>512 bits (64 bytes)</strong>. Because the original input message can have any length, padding is strictly appended according to the following mathematical rules:
+            </p>
+            <ul>
+              <li><strong>Append Single '1' Bit (0x80):</strong> The padding sequence begins by appending a single '1' bit followed by seven '0' bits, producing the hexadecimal byte <code class="code-badge">0x80</code>.</li>
+              <li><strong>Append '0' Bits:</strong> Zero bits (<code class="code-badge">0x00</code> bytes) are appended until the message bit length satisfies <code>L &equiv; 448 (mod 512)</code> (or byte length <code>&equiv; 56 mod 64</code>). This reserves exactly 64 bits at the end of the block.</li>
+              <li><strong>Append 64-Bit Length:</strong> The original unpadded message length (expressed in bits) is appended as an 8-byte (64-bit) integer using <strong>little-endian</strong> byte ordering (least significant byte first). If the original message length exceeds 2<sup>64</sup> bits, only the lower 64 bits are retained.</li>
+            </ul>
+
+            <h4>3. Four 32-Bit State Registers &amp; Initialization Vectors</h4>
+            <p>
+              MD5 maintains an internal state using four 32-bit registers: <strong>A, B, C, and D</strong>. Before processing the first block, these registers are initialized with specific hexadecimal constants written in little-endian format:
+            </p>
+            <div class="rounds-table-wrapper">
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>Register</th>
+                    <th>Hex Value (Word)</th>
+                    <th>Little-Endian Byte Sequence</th>
+                    <th>Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>A</strong></td><td><code>0x67452301</code></td><td><code>01 23 45 67</code></td><td>Initial Working Register A</td></tr>
+                  <tr><td><strong>B</strong></td><td><code>0xEFCDAB89</code></td><td><code>89 AB CD EF</code></td><td>Initial Working Register B</td></tr>
+                  <tr><td><strong>C</strong></td><td><code>0x98BADCFE</code></td><td><code>FE DC BA 98</code></td><td>Initial Working Register C</td></tr>
+                  <tr><td><strong>D</strong></td><td><code>0x10325476</code></td><td><code>76 54 32 10</code></td><td>Initial Working Register D</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4>4. Four-Round Compression Function (64 Operations)</h4>
+            <p>
+              Each 512-bit block is compressed through <strong>64 separate operations</strong> grouped into <strong>4 distinct rounds of 16 operations each</strong>. Each round employs a unique non-linear auxiliary boolean function operating bitwise on three 32-bit inputs (B, C, D):
+            </p>
+            <div class="rounds-table-wrapper">
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>Round</th>
+                    <th>Operations</th>
+                    <th>Auxiliary Function</th>
+                    <th>Logic Formulation</th>
+                    <th>Message Word Index <em>g</em></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Round 1</strong></td><td>0 &ndash; 15</td><td><code>F(B, C, D)</code></td><td><code>(B &amp; C) | (~B &amp; D)</code></td><td><code>g = i</code></td></tr>
+                  <tr><td><strong>Round 2</strong></td><td>16 &ndash; 31</td><td><code>G(B, C, D)</code></td><td><code>(B &amp; D) | (C &amp; ~D)</code></td><td><code>g = (5 &times; i + 1) mod 16</code></td></tr>
+                  <tr><td><strong>Round 3</strong></td><td>32 &ndash; 47</td><td><code>H(B, C, D)</code></td><td><code>B ^ C ^ D</code></td><td><code>g = (3 &times; i + 5) mod 16</code></td></tr>
+                  <tr><td><strong>Round 4</strong></td><td>48 &ndash; 63</td><td><code>I(B, C, D)</code></td><td><code>C ^ (B | ~D)</code></td><td><code>g = (7 &times; i) mod 16</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="formula-block">
+              temp = D<br>
+              D = C<br>
+              C = B<br>
+              B = B + ((A + Function(B, C, D) + K[i] + M[g]) &lt;&lt;&lt; S[i]) (mod 2^32)<br>
+              A = temp
+            </div>
+
+            <h4>5. The Avalanche Effect &amp; Strict Avalanche Criterion (SAC)</h4>
+            <p>
+              A fundamental security requirement of cryptographic hashing is the <strong>Strict Avalanche Criterion (SAC)</strong>. The avalanche effect stipulates that when even a single bit in the input message is modified (for example, comparing <code>"abc"</code> with <code>"abd"</code>), the internal mixing, bitwise non-linear functions, and modular addition must cause roughly <strong>50% of the output digest bits</strong> to flip unpredictably.
+            </p>
+
+            <h4>6. Cryptanalysis &amp; Modern Deprecation (RFC 6151)</h4>
+            <div class="theory-callout danger">
+              <strong>Cryptographic Deprecation Warning:</strong> MD5 is <em>cryptographically broken</em> for collision resistance and must NOT be used for digital certificates, SSL/TLS signatures, or password hashing in modern systems.
+            </div>
+            <p>
+              In 2004, researchers Xiaoyun Wang and Hongbo Yu published practical collision attacks demonstrating that two distinct messages could produce the identical MD5 digest in under an hour. In 2008, chosen-prefix collision attacks allowed forging rogue SSL Certificate Authorities, and in 2012 the Flame malware weaponized MD5 collisions to forge code signatures. Modern systems require <strong>SHA-256 / SHA-3</strong> for message integrity and memory-hard algorithms like <strong>Argon2id or bcrypt</strong> for password storage.
+            </p>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 3: PROCEDURE
+             ========================================================= -->
+        <section id="procedure" class="tab-content" data-tab-panel="procedure" hidden>
+          <div class="theory-section-card">
+            <h3>Experiment Procedure</h3>
+            <p>Follow the architectural flow diagram and procedural steps below to analyze MD5 hash generation, 64-operation compression, and the avalanche effect:</p>
+
+            <!-- Architectural Flow Diagram -->
+            <div class="flowchart-container">
+              <div class="flowchart-title">MD5 Algorithm Execution Pipeline &mdash; Architectural Flow Diagram</div>
+
+              <div class="flow-steps-grid">
+                <div class="flow-step-node">
+                  <div class="flow-step-badge">1</div>
+                  <div class="flow-step-content">
+                    <div class="flow-step-name">Plaintext Input Message</div>
+                    <div class="flow-step-desc">Accepts arbitrary-length text string <em>M</em> of length <em>L</em> bits.</div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow-down">&darr;</div>
+
+                <div class="flow-step-node">
+                  <div class="flow-step-badge">2</div>
+                  <div class="flow-step-content">
+                    <div class="flow-step-name">UTF-8 Encoding &amp; Padding (<code class="code-badge">0x80</code> + Zeros)</div>
+                    <div class="flow-step-desc">Appends single '1' bit (byte 0x80) followed by zero bits so that total length &equiv; 448 mod 512.</div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow-down">&darr;</div>
+
+                <div class="flow-step-node">
+                  <div class="flow-step-badge">3</div>
+                  <div class="flow-step-content">
+                    <div class="flow-step-name">Append 64-bit Length Descriptor</div>
+                    <div class="flow-step-desc">Encodes original length <em>L</em> mod 2<sup>64</sup> as two 32-bit little-endian words. Total length becomes <em>N</em> &times; 512 bits.</div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow-down">&darr;</div>
+
+                <div class="flow-step-node">
+                  <div class="flow-step-badge">4</div>
+                  <div class="flow-step-content">
+                    <div class="flow-step-name">Partition into 512-bit Blocks (<em>M</em><sub>0</sub> &hellip; <em>M</em><sub><em>N</em>-1</sub>)</div>
+                    <div class="flow-step-desc">Each 512-bit block is parsed into sixteen 32-bit Little-Endian words <em>M</em>[0 &hellip; 15].</div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow-down">&darr;</div>
+
+                <div class="flow-step-node">
+                  <div class="flow-step-badge">5</div>
+                  <div class="flow-step-content">
+                    <div class="flow-step-name">Four-Round 64-Step Compression Function</div>
+                    <div class="flow-step-desc">Executes Rounds 1&ndash;4 (Functions <em>F, G, H, I</em>) with constant table <em>K</em>[<em>i</em>] and shift table <em>S</em>[<em>i</em>] updating chaining registers <em>A, B, C, D</em>.</div>
+                  </div>
+                </div>
+
+                <div class="flow-arrow-down">&darr;</div>
+
+                <div class="flow-step-node">
+                  <div class="flow-step-badge">6</div>
+                  <div class="flow-step-content">
+                    <div class="flow-step-name">Merkle&ndash;Damg&aring;rd Addition &amp; 128-bit Little-Endian Serialization</div>
+                    <div class="flow-step-desc">Adds final round registers modulo 2<sup>32</sup> to block initial state and serializes into 32 lowercase hex characters.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h4>Step-by-Step Practical Instructions:</h4>
+            <ol class="procedure-steps-list">
+              <li>Open the <strong>Simulation</strong> tab to access the interactive MD5 workspace.</li>
+              <li>Enter an input message (e.g., <code>abc</code> or <code>hello</code>) or choose from the preset quick chips.</li>
+              <li>Optionally toggle the <strong>Dynamic Salt / Nonce</strong> feature to test keyed message hashing.</li>
+              <li>Click <strong>Generate MD5 Hash</strong> to run the native JavaScript MD5 algorithm and view the 32-character hexadecimal digest.</li>
+              <li>Examine the diagnostic register cards showing the final chaining states <strong>A, B, C, D</strong>.</li>
+              <li>Scroll down to the <strong>MD5 Processing Visualizer</strong> to trace Stages 1 through 6 (Input &rarr; UTF-8 Bytes &rarr; Padding &rarr; Block Words &rarr; 4-Round Compression &rarr; Final Digest).</li>
+              <li>In the <strong>Strict Avalanche Effect Comparator</strong>, enter a second message differing by 1 character (e.g. <code>abd</code> vs <code>abc</code>) and click <strong>Run Avalanche Analysis</strong>.</li>
+              <li>Observe the <strong>128-Bit Heatmap Matrix</strong> where each of the 128 output bits is color-coded to verify ~50% bit diffusion.</li>
+              <li>Switch to the <strong>Assessment / Quiz</strong> tab and answer the 10 questions to test your knowledge.</li>
+              <li>Provide your experimental feedback via the <strong>Feedback</strong> tab to complete the laboratory module.</li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 3: SIMULATION
+             ========================================================= -->
+        <section id="simulation" class="tab-content" data-tab-panel="simulation" hidden>
+          <div class="sim-box">
+            <h3>Interactive MD5 Hash Generator</h3>
+            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: 12px;">
+              Enter any message string below. The manual MD5 algorithm will compute the 128-bit digest, extract block parameters, and generate internal processing states.
+            </p>
+
+            <label for="md5Input" style="font-weight: 700; color: #ffda8b; font-size: var(--font-size-sm); margin-bottom: 6px; display: block;">Message Input Text:</label>
+            <textarea id="md5Input" class="md5-large-textarea" placeholder="Type or paste your plaintext message here..." spellcheck="false">abc</textarea>
+
+            <!-- Dynamic Salt / Nonce Option -->
+            <div class="salt-toggle-card">
+              <label class="salt-toggle-label">
+                <input type="checkbox" id="enableSaltToggle">
+                <span>Append Dynamic Salt / Nonce to Message</span>
+              </label>
+              <span id="saltBadgeToken" class="salt-badge-token" style="display: none;">SALT: NONE</span>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="preset-buttons">
+              <span style="font-size: 12px; color: var(--color-text-muted); margin-right: 4px;">Quick Presets:</span>
+              <button type="button" class="preset-btn" data-preset="abc">"abc"</button>
+              <button type="button" class="preset-btn" data-preset="hello">"hello"</button>
+              <button type="button" class="preset-btn" data-preset="">Empty ("")</button>
+              <button type="button" class="preset-btn" data-preset="abd">"abd"</button>
+              <button type="button" class="preset-btn" data-preset="é">Unicode ("é")</button>
+              <button type="button" class="preset-btn" data-preset="The quick brown fox jumps over the lazy dog">"quick brown fox..."</button>
+            </div>
+
+            <div class="button-row">
+              <button type="button" id="generateHash" class="btn-primary">Generate MD5 Hash</button>
+              <button type="button" id="clearInput" class="btn-secondary">Clear Input</button>
+            </div>
+
+            <!-- Hash Output Card -->
+            <div class="hash-display-card" aria-live="polite">
+              <div style="font-size: 12px; font-weight: 700; color: #ffda8b; text-transform: uppercase; margin-bottom: 6px;">128-Bit Computed MD5 Digest (32 Hex Characters):</div>
+              <div class="hash-output-row">
+                <span id="hashOutput" class="hash-hex-value">900150983cd24fb0d6963f7d28e17f72</span>
+                <button type="button" id="copyHashBtn" class="btn-copy">Copy Digest</button>
+              </div>
+            </div>
+
+            <!-- Quantitative Diagnostics -->
+            <div class="analysis-container">
+              <div class="metric-card">
+                <span class="metric-label">Input Character Count</span>
+                <span id="statCharCount" class="metric-value">3</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">Unpadded Bit Length</span>
+                <span id="statOrigBits" class="metric-value">24 bits</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">Padded Stream Size</span>
+                <span id="statPaddedBytes" class="metric-value">64 bytes (512 bits)</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">512-Bit Blocks Processed</span>
+                <span id="statBlockCount" class="metric-value">1 block</span>
+              </div>
+            </div>
+
+            <!-- Chaining State Registers -->
+            <div style="margin-top: 18px;">
+              <span style="font-size: 13px; font-weight: 700; color: #ffda8b;">Final Chaining State Registers (A, B, C, D):</span>
+              <div class="registers-grid">
+                <div class="register-card">
+                  <div class="register-name">Register A (Word 0)</div>
+                  <div id="regA" class="register-hex">0x98500190</div>
+                </div>
+                <div class="register-card">
+                  <div class="register-name">Register B (Word 1)</div>
+                  <div id="regB" class="register-hex">0x4b2fcd3c</div>
+                </div>
+                <div class="register-card">
+                  <div class="register-name">Register C (Word 2)</div>
+                  <div id="regC" class="register-hex">0x7d3f96d6</div>
+                </div>
+                <div class="register-card">
+                  <div class="register-name">Register D (Word 3)</div>
+                  <div id="regD" class="register-hex">0x727fe128</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- STRICT AVALANCHE EFFECT COMPARATOR & 128-BIT HEATMAP -->
+            <div class="avalanche-section">
+              <div class="avalanche-header">
+                <h3>Strict Avalanche Effect Comparator</h3>
+                <span class="badge-avalanche">Strict Avalanche Criterion (SAC)</span>
+              </div>
+              <div class="avalanche-history-banner">
+                Compare two messages differing by as little as 1 bit or 1 character. The Strict Avalanche Criterion guarantees that flipping a single bit propagates through 64 non-linear compression operations to flip approximately <strong>50% (64 out of 128)</strong> of the digest bits.
+              </div>
+
+              <div class="avalanche-inputs-grid">
+                <div class="avalanche-col">
+                  <label for="avMsg1">Input Message 1:</label>
+                  <input type="text" id="avMsg1" value="abc">
+                  <div id="avHash1" class="av-hash-preview">900150983cd24fb0d6963f7d28e17f72</div>
+                </div>
+                <div class="avalanche-col">
+                  <label for="avMsg2">Input Message 2 (Changed Input):</label>
+                  <input type="text" id="avMsg2" value="abd">
+                  <div id="avHash2" class="av-hash-preview">4911e516e5aa21d327512e0c8b197616</div>
+                </div>
+              </div>
+
+              <div class="button-row" style="margin-top: 0;">
+                <button type="button" id="btnRunAvalanche" class="btn-primary">Run Avalanche Analysis</button>
+                <button type="button" id="btnToggleChar" class="btn-secondary">Auto-Mutate Last Character</button>
+              </div>
+
+              <!-- Avalanche Metrics -->
+              <div class="avalanche-stats-row">
+                <div class="avalanche-stat-box">
+                  <div id="avFlippedCount" class="avalanche-stat-val stat-flipped">63 / 128</div>
+                  <div class="avalanche-stat-label">Bits Flipped (Hamming Distance)</div>
+                </div>
+                <div class="avalanche-stat-box">
+                  <div id="avPercent" class="avalanche-stat-val stat-percent">49.22%</div>
+                  <div class="avalanche-stat-label">Percentage Diffusion (~50% Ideal)</div>
+                </div>
+                <div class="avalanche-stat-box">
+                  <div id="avHexFlipped" class="avalanche-stat-val">30 / 32</div>
+                  <div class="avalanche-stat-label">Hex Characters Altered</div>
+                </div>
+                <div class="avalanche-stat-box">
+                  <div id="avStatus" class="avalanche-stat-val stat-status" style="font-size: 1.05rem;">Ideal Avalanche Diffusion</div>
+                  <div class="avalanche-stat-label">Criterion Evaluation</div>
+                </div>
+              </div>
+
+              <!-- 128-Bit Heatmap Matrix Diagram -->
+              <div class="avalanche-grid-container">
+                <div class="avalanche-grid-title">
+                  <span>128-Bit Digest Heatmap Diagram (Registers A, B, C, D &times; 32 Bits)</span>
+                  <span style="font-size: 11px; font-weight: normal; color: #ccc;">Hover over any cell to inspect bit index and registers</span>
+                </div>
+                <div id="bitMatrixContainer" class="bit-matrix-128">
+                  <!-- Dynamically populated 128 bit cells -->
+                </div>
+                <div class="legend-bar">
+                  <div class="legend-item">
+                    <span class="legend-chip" style="background: #4a1818; border: 1px solid #7c2626;"></span>
+                    <span>Flipped Bit ('1' - Changed via Avalanche)</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-chip" style="background: #1c271e; border: 1px solid #2c4230;"></span>
+                    <span>Identical Bit ('0' - Unchanged)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MD5 PROCESSING VISUALIZER (STAGES 1 TO 6) -->
+            <div class="visualizer-wrapper" id="md5Visualizer">
+              <h3 style="color: #ffda8b; font-size: var(--font-size-xl); margin-bottom: 8px;">
+                MD5 Processing Visualizer (RFC 1321 Pipeline)
+              </h3>
+              <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: 14px;">
+                Trace the internal step-by-step transformation of your input message through the 6 stages of the MD5 processing flow.
+              </p>
+
+              <!-- Stage 1 -->
+              <div class="stage-card">
+                <button type="button" class="stage-toggle-btn open" data-stage="1">
+                  <span class="stage-num-badge">1</span>
+                  <span>Input Message Specification</span>
+                  <span class="stage-toggle-arrow">&blacktriangledown;</span>
+                </button>
+                <div class="stage-body open" id="stage1Body">
+                  <p>Raw plaintext message string. Each character is encoded into UTF-8 binary bytes.</p>
+                  <div class="code-display-box" id="visInputMsg">"abc"</div>
+                  <p id="visInputStats">Length: 3 characters | 3 bytes | 24 bits</p>
+                </div>
+              </div>
+
+              <!-- Stage 2 -->
+              <div class="stage-card">
+                <button type="button" class="stage-toggle-btn open" data-stage="2">
+                  <span class="stage-num-badge">2</span>
+                  <span>UTF-8 Encoding (Hexadecimal Bytes)</span>
+                  <span class="stage-toggle-arrow">&blacktriangledown;</span>
+                </button>
+                <div class="stage-body open" id="stage2Body">
+                  <p>Hexadecimal representation of each byte before cryptographic padding is applied.</p>
+                  <div class="code-display-box" id="visUtf8Bytes">61 62 63</div>
+                </div>
+              </div>
+
+              <!-- Stage 3 -->
+              <div class="stage-card">
+                <button type="button" class="stage-toggle-btn open" data-stage="3">
+                  <span class="stage-num-badge">3</span>
+                  <span>MD5 Preprocessing &amp; Padding</span>
+                  <span class="stage-toggle-arrow">&blacktriangledown;</span>
+                </button>
+                <div class="stage-body open" id="stage3Body">
+                  <p>
+                    Padding is appended so the message length is congruent to 448 mod 512 bits (56 mod 64 bytes). A single <code>0x80</code> byte is appended, followed by zero padding, and finalized with the 64-bit unpadded length in little-endian format.
+                  </p>
+                  <div class="padding-legend">
+                    <div class="legend-item"><span class="legend-chip" style="background:#70b8ff;"></span> <span class="pad-original">Original Message</span></div>
+                    <div class="legend-item"><span class="legend-chip" style="background:#f5a623;"></span> <span class="pad-start">0x80 Pad Byte</span></div>
+                    <div class="legend-item"><span class="legend-chip" style="background:#88786f;"></span> <span class="pad-zeros">Zero Padding</span></div>
+                    <div class="legend-item"><span class="legend-chip" style="background:#2ed573;"></span> <span class="pad-len">64-bit LE Length</span></div>
+                  </div>
+                  <div class="code-display-box" id="visPaddedBytes">
+                    <!-- Formatted padded bytes -->
+                  </div>
+                  <p id="visPaddingStats">Total padded size: 64 bytes (512 bits)</p>
+                </div>
+              </div>
+
+              <!-- Stage 4 -->
+              <div class="stage-card">
+                <button type="button" class="stage-toggle-btn open" data-stage="4">
+                  <span class="stage-num-badge">4</span>
+                  <span>512-Bit Block &amp; 16-Word Division (M[0 &hellip; 15])</span>
+                  <span class="stage-toggle-arrow">&blacktriangledown;</span>
+                </button>
+                <div class="stage-body open" id="stage4Body">
+                  <p>Each 512-bit block is parsed into sixteen 32-bit little-endian words: <code>M[0]</code> through <code>M[15]</code>.</p>
+                  <div id="visBlockContainer">
+                    <!-- Dynamic word grid rendered by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stage 5 -->
+              <div class="stage-card">
+                <button type="button" class="stage-toggle-btn open" data-stage="5">
+                  <span class="stage-num-badge">5</span>
+                  <span>Four-Round Compression Breakdown (64 Operations)</span>
+                  <span class="stage-toggle-arrow">&blacktriangledown;</span>
+                </button>
+                <div class="stage-body open" id="stage5Body">
+                  <p>
+                    The 512-bit block is compressed across 4 sequential rounds (16 operations each = 64 total operations) updating state registers A, B, C, D:
+                  </p>
+                  <div class="rounds-container">
+                    <div class="round-card">
+                      <h4>Round 1 (Ops 0&ndash;15)</h4>
+                      <ul>
+                        <li>Function: <code>F(B, C, D) = (B &amp; C) | (~B &amp; D)</code></li>
+                        <li>Word Index: <code>g = i</code></li>
+                        <li>Rotations: [7, 12, 17, 22]</li>
+                      </ul>
+                      <div class="register-card" style="margin-top:8px;">
+                        <span id="visR1State" style="font-size: 11px;">State after R1: calculating...</span>
+                      </div>
+                    </div>
+                    <div class="round-card">
+                      <h4>Round 2 (Ops 16&ndash;31)</h4>
+                      <ul>
+                        <li>Function: <code>G(B, C, D) = (B &amp; D) | (C &amp; ~D)</code></li>
+                        <li>Word Index: <code>g = (5i + 1) mod 16</code></li>
+                        <li>Rotations: [5, 9, 14, 20]</li>
+                      </ul>
+                      <div class="register-card" style="margin-top:8px;">
+                        <span id="visR2State" style="font-size: 11px;">State after R2: calculating...</span>
+                      </div>
+                    </div>
+                    <div class="round-card">
+                      <h4>Round 3 (Ops 32&ndash;47)</h4>
+                      <ul>
+                        <li>Function: <code>H(B, C, D) = B ^ C ^ D</code></li>
+                        <li>Word Index: <code>g = (3i + 5) mod 16</code></li>
+                        <li>Rotations: [4, 11, 16, 23]</li>
+                      </ul>
+                      <div class="register-card" style="margin-top:8px;">
+                        <span id="visR3State" style="font-size: 11px;">State after R3: calculating...</span>
+                      </div>
+                    </div>
+                    <div class="round-card">
+                      <h4>Round 4 (Ops 48&ndash;63)</h4>
+                      <ul>
+                        <li>Function: <code>I(B, C, D) = C ^ (B | ~D)</code></li>
+                        <li>Word Index: <code>g = (7i) mod 16</code></li>
+                        <li>Rotations: [6, 10, 15, 21]</li>
+                      </ul>
+                      <div class="register-card" style="margin-top:8px;">
+                        <span id="visR4State" style="font-size: 11px;">State after R4: calculating...</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stage 6 -->
+              <div class="stage-card">
+                <button type="button" class="stage-toggle-btn open" data-stage="6">
+                  <span class="stage-num-badge">6</span>
+                  <span>Final 128-Bit Digest Formation</span>
+                  <span class="stage-toggle-arrow">&blacktriangledown;</span>
+                </button>
+                <div class="stage-body open" id="stage6Body">
+                  <p>
+                    Registers from Round 4 are added modulo 2<sup>32</sup> to the original block state values:
+                  </p>
+                  <div class="registers-grid" id="visFinalRegisters">
+                    <!-- Populated by JS -->
+                  </div>
+                  <p style="margin-top: 10px;">
+                    Each register is converted to 8 lowercase hexadecimal characters in <strong>little-endian byte ordering</strong> and concatenated to produce the final 32-character (128-bit) MD5 hash:
+                  </p>
+                  <div class="code-display-box" id="visFinalHash" style="color: #4cd964; font-weight: 700; font-size: 15px;">
+                    900150983cd24fb0d6963f7d28e17f72
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 4: ASSESSMENT / QUIZ (10 QUESTIONS)
+             ========================================================= -->
+        <section id="quiz" class="tab-content" data-tab-panel="quiz" hidden>
+          <div class="theory-section-card">
+            <h3>Knowledge Check &amp; Assessment Quiz</h3>
+            <p>Answer all 10 questions below to evaluate your understanding of the MD5 hashing algorithm, round mechanics, preprocessing, and cryptographic properties.</p>
+
+            <form id="md5QuizForm" class="quiz-wrapper" onsubmit="return false;">
+              <!-- Question 1 -->
+              <div class="quiz-card" id="card_q1">
+                <div class="quiz-question-title">1. What is the fixed output digest size produced by the MD5 algorithm?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q1" value="128"> 128 bits (32 hexadecimal characters)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q1" value="160"> 160 bits (40 hexadecimal characters)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q1" value="256"> 256 bits (64 hexadecimal characters)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q1" value="512"> 512 bits (128 hexadecimal characters)</label>
+                </div>
+                <div id="exp_q1" class="quiz-explanation">
+                  <strong>Explanation:</strong> MD5 produces a fixed-length 128-bit digest, serialized as four 32-bit Little-Endian words totaling 32 hexadecimal characters.
+                </div>
+              </div>
+
+              <!-- Question 2 -->
+              <div class="quiz-card" id="card_q2">
+                <div class="quiz-question-title">2. In MD5 preprocessing, which single byte is immediately appended to the message prior to zero padding?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q2" value="00"> 0x00</label>
+                  <label class="quiz-option-label"><input type="radio" name="q2" value="80"> 0x80 (a single '1' bit followed by seven '0' bits)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q2" value="FF"> 0xFF</label>
+                  <label class="quiz-option-label"><input type="radio" name="q2" value="01"> 0x01</label>
+                </div>
+                <div id="exp_q2" class="quiz-explanation">
+                  <strong>Explanation:</strong> Padding begins by appending a single '1' bit. In byte alignment, this constitutes the byte 0x80 (binary 10000000).
+                </div>
+              </div>
+
+              <!-- Question 3 -->
+              <div class="quiz-card" id="card_q3">
+                <div class="quiz-question-title">3. What is the block size processed during each compression iteration in MD5?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q3" value="128"> 128 bits</label>
+                  <label class="quiz-option-label"><input type="radio" name="q3" value="256"> 256 bits</label>
+                  <label class="quiz-option-label"><input type="radio" name="q3" value="512"> 512 bits (divided into sixteen 32-bit words)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q3" value="1024"> 1024 bits</label>
+                </div>
+                <div id="exp_q3" class="quiz-explanation">
+                  <strong>Explanation:</strong> MD5 processes data in 512-bit (64-byte) blocks. Each block is subdivided into sixteen 32-bit integer words M[0..15].
+                </div>
+              </div>
+
+              <!-- Question 4 -->
+              <div class="quiz-card" id="card_q4">
+                <div class="quiz-question-title">4. How many total compression steps (operations) are executed for each 512-bit block in MD5?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q4" value="16"> 16 operations</label>
+                  <label class="quiz-option-label"><input type="radio" name="q4" value="32"> 32 operations</label>
+                  <label class="quiz-option-label"><input type="radio" name="q4" value="64"> 64 operations (4 rounds &times; 16 operations)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q4" value="128"> 128 operations</label>
+                </div>
+                <div id="exp_q4" class="quiz-explanation">
+                  <strong>Explanation:</strong> MD5 executes 4 rounds with 16 steps per round, giving a total of 4 &times; 16 = 64 operations per 512-bit block.
+                </div>
+              </div>
+
+              <!-- Question 5 -->
+              <div class="quiz-card" id="card_q5">
+                <div class="quiz-question-title">5. What phenomenon causes a single-character or single-bit change in the input to flip ~50% of the output hash bits?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q5" value="collision"> Collision Resistance</label>
+                  <label class="quiz-option-label"><input type="radio" name="q5" value="avalanche"> Avalanche Effect (Strict Avalanche Criterion)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q5" value="preimage"> Pre-image Resistance</label>
+                  <label class="quiz-option-label"><input type="radio" name="q5" value="expansion"> Length Extension Property</label>
+                </div>
+                <div id="exp_q5" class="quiz-explanation">
+                  <strong>Explanation:</strong> The Avalanche Effect ensures that even a microscopic 1-bit input change propagates rapidly across non-linear rounds to randomize roughly half of the digest bits.
+                </div>
+              </div>
+
+              <!-- Question 6 -->
+              <div class="quiz-card" id="card_q6">
+                <div class="quiz-question-title">6. Which auxiliary Boolean function is used in Round 1 (Steps 0 to 15) of MD5?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q6" value="func_f"> F(B, C, D) = (B &amp; C) | (~B &amp; D)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q6" value="func_g"> G(B, C, D) = (B &amp; D) | (C &amp; ~D)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q6" value="func_h"> H(B, C, D) = B ^ C ^ D</label>
+                  <label class="quiz-option-label"><input type="radio" name="q6" value="func_i"> I(B, C, D) = C ^ (B | ~D)</label>
+                </div>
+                <div id="exp_q6" class="quiz-explanation">
+                  <strong>Explanation:</strong> Round 1 uses F(B, C, D) = (B &amp; C) | (~B &amp; D), which functions as a conditional multiplexer (if B is 1 pick C, else pick D).
+                </div>
+              </div>
+
+              <!-- Question 7 -->
+              <div class="quiz-card" id="card_q7">
+                <div class="quiz-question-title">7. How are the sixty-four 32-bit constants K[i] in MD5 mathematically derived?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q7" value="primes"> Fractional parts of square roots of prime numbers</label>
+                  <label class="quiz-option-label"><input type="radio" name="q7" value="sine"> Integer parts of 2^32 &times; |sin(i + 1)|</label>
+                  <label class="quiz-option-label"><input type="radio" name="q7" value="des"> Precomputed DES S-box substitution tables</label>
+                  <label class="quiz-option-label"><input type="radio" name="q7" value="random"> Pseudo-random numbers generated by linear congruential generators</label>
+                </div>
+                <div id="exp_q7" class="quiz-explanation">
+                  <strong>Explanation:</strong> RFC 1321 defines K[i] = floor(2^32 &times; |sin(i + 1)|) for 0 &le; i &le; 63, providing "nothing-up-my-sleeve" constants.
+                </div>
+              </div>
+
+              <!-- Question 8 -->
+              <div class="quiz-card" id="card_q8">
+                <div class="quiz-question-title">8. How is the original message bit-length appended during MD5 preprocessing?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q8" value="32bit_be"> As a 32-bit big-endian integer</label>
+                  <label class="quiz-option-label"><input type="radio" name="q8" value="64bit_le"> As a 64-bit little-endian integer</label>
+                  <label class="quiz-option-label"><input type="radio" name="q8" value="128bit_be"> As a 128-bit big-endian integer</label>
+                  <label class="quiz-option-label"><input type="radio" name="q8" value="ascii"> As an ASCII numeric string</label>
+                </div>
+                <div id="exp_q8" class="quiz-explanation">
+                  <strong>Explanation:</strong> The original length (in bits) before padding is appended as a 64-bit little-endian integer modulo 2^64.
+                </div>
+              </div>
+
+              <!-- Question 9 -->
+              <div class="quiz-card" id="card_q9">
+                <div class="quiz-question-title">9. What byte ordering convention does MD5 use when parsing words and assembling the output digest?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q9" value="big_endian"> Big-endian (most significant byte first)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q9" value="little_endian"> Little-endian (least significant byte first)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q9" value="middle_endian"> Middle-endian (PDP-11 architecture)</label>
+                  <label class="quiz-option-label"><input type="radio" name="q9" value="network_order"> Network byte order</label>
+                </div>
+                <div id="exp_q9" class="quiz-explanation">
+                  <strong>Explanation:</strong> MD5 uses Little-Endian byte order for both message word interpretation and final register string concatenation.
+                </div>
+              </div>
+
+              <!-- Question 10 -->
+              <div class="quiz-card" id="card_q10">
+                <div class="quiz-question-title">10. Why is MD5 considered broken and unsafe for digital certificates and password verification today?</div>
+                <div class="quiz-options-group">
+                  <label class="quiz-option-label"><input type="radio" name="q10" value="collision"> Practical collision attacks allow generating two different messages with identical hashes</label>
+                  <label class="quiz-option-label"><input type="radio" name="q10" value="digest_size"> Its 128-bit digest size cannot be stored in modern relational databases</label>
+                  <label class="quiz-option-label"><input type="radio" name="q10" value="asymmetric"> It relies on secret private keys that can be intercepted over the network</label>
+                  <label class="quiz-option-label"><input type="radio" name="q10" value="speed"> It is too computationally slow compared to bcrypt and Argon2</label>
+                </div>
+                <div id="exp_q10" class="quiz-explanation">
+                  <strong>Explanation:</strong> Efficient collision attacks discovered by Wang et al. allow attackers to create distinct files or certificates with identical MD5 digests, completely breaking collision resistance.
+                </div>
+              </div>
+
+              <div class="button-row" style="margin-top: 10px;">
+                <button type="button" id="submitQuiz" class="btn-primary">Submit Answers</button>
+                <button type="button" id="retryQuiz" class="btn-secondary" style="display: none;">Retake Quiz</button>
+              </div>
+
+              <div id="quizResult" class="quiz-score-banner" role="status" aria-live="polite"></div>
+            </form>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 5: REFERENCES
+             ========================================================= -->
+        <section id="references" class="tab-content" data-tab-panel="references" hidden>
+          <div class="references-container">
+            <h2>References &amp; Further Reading</h2>
+            <div class="reference-card">
+              <div class="reference-title">RFC 1321 &mdash; The MD5 Message-Digest Algorithm</div>
+              <div class="reference-meta">
+                R. Rivest, MIT Laboratory for Computer Science and RSA Data Security, Inc., April 1992.
+                <br>
+                <a class="reference-link" href="https://www.ietf.org/rfc/rfc1321.txt" target="_blank" rel="noopener noreferrer">https://www.ietf.org/rfc/rfc1321.txt</a>
+              </div>
+            </div>
+            <div class="reference-card">
+              <div class="reference-title">RFC 6151 &mdash; Updated Security Considerations for the MD5 Message-Digest and HMAC-MD5 Algorithms</div>
+              <div class="reference-meta">
+                S. Turner, L. Chen, Internet Engineering Task Force (IETF), March 2011. Documents collision vulnerabilities and deprecates MD5 for digital signatures.
+                <br>
+                <a class="reference-link" href="https://www.ietf.org/rfc/rfc6151.txt" target="_blank" rel="noopener noreferrer">https://www.ietf.org/rfc/rfc6151.txt</a>
+              </div>
+            </div>
+            <div class="reference-card">
+              <div class="reference-title">William Stallings &mdash; Cryptography and Network Security: Principles and Practice</div>
+              <div class="reference-meta">
+                Authoritative textbook covering cryptographic hash functions, compression algorithms, message authentication codes, and security architectures. Pearson Education.
+              </div>
+            </div>
+            <div class="reference-card">
+              <div class="reference-title">How to Break MD5 and Other Hash Functions</div>
+              <div class="reference-meta">
+                Xiaoyun Wang and Hongbo Yu, EUROCRYPT 2005, Lecture Notes in Computer Science, vol 3494, Springer. The seminal paper demonstrating practical modular differential collision attacks on MD5.
+              </div>
+            </div>
+            <div class="reference-card">
+              <div class="reference-title">NIST Special Publication (SP) 800-131A Revision 2</div>
+              <div class="reference-meta">
+                National Institute of Standards and Technology Computer Security Division recommendation transitioning away from MD5 and SHA-1 for digital signatures.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 6: FEEDBACK
+             ========================================================= -->
+        <section id="feedback" class="tab-content" data-tab-panel="feedback" hidden>
+          <!-- Standardized encrypted feedback form automatically rendered by feedback.js -->
+        </section>
+      </main>
+    </div>
+
+    <!-- Scripts (Ordered as required by integration) -->
+    <script src="../../js/common.js"></script>
+    <script src="script.js"></script>
+    <script src="../../js/crypto-feedback.js"></script>
+    <script src="../../js/feedback.js"></script>
+  </body>
+</html>
